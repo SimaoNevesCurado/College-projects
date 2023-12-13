@@ -1,495 +1,281 @@
-#include <errno.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
 #include <string.h>
-#define MAXSTRING 50
-#define MAXIMOESTUDANTES 100
-
-
-typedef struct
-{
-    int ano, mes, dia;
-} data;
-
-typedef struct
-{
-    int numero;
-    char nome[MAXSTRING];
-    float nota;
-    data dataAvaliacao;
-} tipoEstudante;
+#include <ctype.h>
+#include "funcoes_auxiliares.h"
+#include "funcoes_reservas.h"
+#define MAX 100
+#define MAXSTRING 64
+#define MIN_NUM 1
+#define MAX_NUM 9999
 
 typedef struct{
-char codigo[50];
-tipoEstudante numero;
-data dataRefeicao;
-int refeicao;
+  int numero;  
+  char nome[MAXSTRING];
+  tipoData dataAval;
+  float nota;
+}tipoEstudante;
 
-}TipoReserva;
-
-
-char menu(int totalAlunos, int NAvaliados, float  percentagem);
-void limparBufferStdin();
-int lerInteiro(int minimo, int maximo);
-float lerFloat(float minimo, float maximo);
-void lerString(char text[], int max);
-data lerData();
+void limpaBufferStdin();
 int lerQuantidadeEstudantes();
-tipoEstudante lerDadosEstudante(tipoEstudante estudantes[], int indiceMax);
-void lerNotas(tipoEstudante estudantes[], int numEstudantes);
-void mostrarDados(tipoEstudante estudantes[], int numEstudantes);
-int acrescentaAvaliado(tipoEstudante estudantes[], int numEstudantes);
-int procuraEstudante(tipoEstudante estudantes[],int numEstudante, int num);
-int contas(tipoEstudante estudantes[],float *MPositivos, int numEstu);
-void gravaFicheiroBinario(tipoEstudante estudantes[MAXIMOESTUDANTES], int totalEstu);
-int leFicheiroBinario(tipoEstudante estudantes[MAXIMOESTUDANTES]);
+void lerDadosEstudante(tipoEstudante *estudante, tipoEstudante estudantes[MAX], int quantidade);
+int lerNotas(tipoEstudante estudantes[MAX], int quantidade);
+void mostrarDados(tipoEstudante estudantes[MAX], int quantidade);
 
-int main()
-{
-    tipoEstudante estudantes[MAXIMOESTUDANTES];
-    int totalEstudantes, nAvaliados = 0, i = 0;
-    int numReservas =0;
-    float Mpositivos = 0.00;
-    char opcao;
+void acrescentaEstudante(tipoEstudante estudantes[MAX], int *quantidade);
+int obterNumEstudanteExistente(tipoEstudante estudantes[MAX], int quantidade);
+int procuraEstudante(tipoEstudante estudantes[MAX], int quantidade);
+char menu(tipoEstudante estudantes[MAX], int quantidade);
+void contas(tipoEstudante estudantes[MAX], int quantidade, int *num_avaliados, float *per_notas_positivas);
+void gravaFicheiroBinario(tipoEstudante estudantes[MAX], int quantidade);
+void lerFicheiroBinario(tipoEstudante estudantes[MAX], int *quantidade);
+void gravaFicheiroTexto(tipoEstudante estudantes[MAX], int quantidade);
 
-    do
-    {
-        nAvaliados = contas(estudantes, &Mpositivos, totalEstudantes);
-        opcao = menu(totalEstudantes, nAvaliados, Mpositivos);
-        switch(opcao)
-        {
-        case 'A':
-            totalEstudantes = acrescentaAvaliado(estudantes, totalEstudantes);
-            break;
-        case 'I':
-            if(nAvaliados < totalEstudantes)
-            {
-                lerNotas(estudantes, totalEstudantes);
-            }
-            else
-            {
-                printf("\nTodos os alunos tem notas introduzidas\n");
-            }
-            break;
-        case 'M':
-            mostrarDados(estudantes, totalEstudantes);
-            break;
-        case 'G':
-            gravaFicheiroBinario(estudantes,totalEstudantes);
-            //gravaFicheiroTexto(estudantes,totalEstudantes);
-            break;
-        case 'L':
-            totalEstudantes = leFicheiroBinario(estudantes);
-            break;
-        case 'F':
-            break;
-        default:
-            printf("\nOpcao invalida");
-        }
-    }
-    while(opcao != 'F');
-    return 0;
-}
-/*TipoReserva lerDadosReserva(tipoEstudante estudantes[], int indiceMax)
-{
-    TipoReserva dadosreserva;
-    tipoEstudante dados;
-    int controlo;
-
-    do
-    {
-        printf("\nIndique o numero estudante\n");
-        dados.numero = lerInteiro(1,9999);
-        controlo = procuraEstudante(estudantes, indiceMax, dados.numero);
-
-        if(controlo != -1)
-        {
-        printf("\nIndique o codigo da reserva\n");
-        lerString(dadosreserva.codigo,MAXSTRING);
-        lerData();
-
-        }else{
-        printf("Estudante não existe");
-        }
-    }
-    while(controlo != -1);
-
-
-    return dados;
-/
-
-int acrescentaReserva(tipoEstudante estudantes[], int numEstudantes)
-{
-    if(numEstudantes < 100)
-    {
-        estudantes[numEstudantes] = lerDadosReserva(estudantes,numEstudantes);
-
-        numEstudantes += 1;
-    }
-    else
-    {
-        printf("\nTotal de estudantes atingido.\n");
-    }
-    return numEstudantes;
-}
-*/
-
-char menu(int totalAlunos, int NAvaliados, float  percentagem)
-{
-    char opcao;
-    do
-    {
-        printf("\n************************ Menu Principal ************************\n");
-        printf("\nEstudantes Inseridos: %3d\n",totalAlunos);
-        printf("Estudantes Avaliados: %3d   \t       Notas Positivas (%%): %3.2f\n", NAvaliados, percentagem);
-        printf("\nA - Acrescenta Estudante");
-        printf("\nI - Introducao Notas");
-        printf("\nM - Mostrar Dados");
-        printf("\nG - Gravar dados em ficheiros");
-        printf("\nL - Ler dados de ficheiro");
-        printf("\nR - Criar reserva");
-        printf("\nO - Eliminar reserva");
-        printf("\nL - Ler dados de ficheiro");
-        printf("\nF - Fim");
-        printf("\n\t\t\tOpcao--> ");
-        scanf(" %c",&opcao);
-        opcao = toupper(opcao);
-        if(opcao != 'A' && opcao != 'I' && opcao != 'M' && opcao != 'F' && opcao != 'G' && opcao != 'L')
-        {
-            printf("\nOpcao invalida\n");
-        }
-    }
-    while(opcao != 'A' && opcao != 'I' && opcao != 'M' && opcao != 'F' && opcao != 'G' && opcao != 'L');
-    return opcao;
-}
-
-int lerInteiro(int minimo, int maximo)
-{
-    int num, controlo;
-
-    do
-    {
-        printf("\nIndique valor %d - %d\n",minimo,maximo);
-        controlo = scanf("%d", &num);
-        limparBufferStdin();
-
-        if (num < minimo || num > maximo || controlo == 0)
-        {
-            printf("\nOpcao invalida, o numero tem de ser inteiro e estar no intervalo\n");
-        }
-    }
-    while(num < minimo || num > maximo || controlo == 0);
-    return num;
-}
-
-float lerFloat(float minimo, float maximo)
-{
-    float num;
-    int controlo;
-
-    do
-    {
-        printf("\nIndique valor %.2f - %.2f\n",minimo,maximo);
-        controlo = scanf("%f", &num);
-        limparBufferStdin();
-        if (num < minimo || num > maximo || controlo == 0)
-        {
-            printf("\nOpcao invalida, o numero tem de estar no intervalo\n");
-        }
-    }
-    while(num < minimo || num > maximo || controlo == 0);
-    return num;
-}
-
-void lerString(char text[], int max)
-{
-    int tamanhoString;
-    do  /*Repete leitura caso sejam introduzidas strings apenas com o \n (tamanhoString == 1) */
-    {
-        fgets(text, max, stdin);
-        tamanhoString = strlen(text);
-    }
-    while(tamanhoString == 1);
-    if (text[tamanhoString-1] != '\n')
-    {
-        /* armazenados no vetor todos os caracteres */
-        limparBufferStdin(); /* elimina caracteres que ficaram no buffer stdin */
-    }
-    else
-    {
-        text[tamanhoString-1] ='\0'; /*substitui \n da string armazenada em vetor por \0 */
-    }
-}
-
-data lerData()
-{
-    int maxDias;
-    data dataAvaliacao;
-    printf("\nIntroduza o ano:");
-    dataAvaliacao.ano = lerInteiro(2023,2100);
-    printf("\nIntroduza o mes:");
-    dataAvaliacao.mes = lerInteiro(1,12);
-    printf("\nIntroduza o dia:");
-
-    switch(dataAvaliacao.mes)
-    {
-    case 2:
-        if(dataAvaliacao.ano%4 == 0 && dataAvaliacao.ano%100 != 0)
-        {
-            maxDias = 29;
-        }
-        else
-        {
-            maxDias = 28;
-        }
+int main(){
+  tipoEstudante estudantes[MAX];
+  int quantidade = 0;
+  Reserva* reservas = NULL;
+  int num_reservas = 0;
+  int tamanho = MAX_RESERVA;
+  reservas = reservar_espaco(reservas, tamanho);
+  char op; 
+  do{
+    op = menu(estudantes, quantidade);
+    switch(op) {
+      case 'A':
+        printf("Ok\n");
+        acrescentaEstudante(estudantes, &quantidade);
         break;
-    case 4:
-    case 6:
-    case 9:
-    case 11:
-        maxDias = 30;
+      case 'I':
+        lerNotas(estudantes, quantidade);
         break;
-    default:
-        maxDias = 31;
-    }
-
-    dataAvaliacao.dia = lerInteiro(1,maxDias);
-
-    return dataAvaliacao;
-}
-
-int lerQuantidadeEstudantes()
-{
-    int totalEstudantes;
-    printf("\nIntroduza a quantidade de estudantes.\n");
-    totalEstudantes = lerInteiro(1,MAXIMOESTUDANTES);
-
-    return totalEstudantes;
-}
-
-tipoEstudante lerDadosEstudante(tipoEstudante estudantes[], int indiceMax)
-{
-    tipoEstudante dados;
-    int controlo;
-
-    do
-    {
-        printf("\nIndique o numero estudante\n");
-        dados.numero = lerInteiro(1,9999);
-        controlo = procuraEstudante(estudantes, indiceMax, dados.numero);
-
-        if(controlo != -1)
-        {
-            printf("\nO estudante ja esta inserido\n");
+      case 'M':
+        mostrarDados(estudantes, quantidade);
+        break;
+      case 'G':
+        gravaFicheiroBinario(estudantes, quantidade);
+        gravaFicheiroTexto(estudantes, quantidade);
+        break;
+      case 'L':
+        lerFicheiroBinario(estudantes, &quantidade);
+        break;
+      case 'R':
+        if(quantidade == 0) {
+          printf("Nao existe estudantes para reservar refeicao.\n");
+          break;
         }
+        adicionar_reserva(reservas, &num_reservas, &tamanho, obterNumEstudanteExistente(estudantes, quantidade));
+        break;
+      case 'E':
+        break;
+      default:
+        printf("Opcao invalida\n");
     }
-    while(controlo != -1);
-    printf("\nIndique o nome do estudante\n");
-    lerString(dados.nome, MAXSTRING);
-    dados.nota = -1;
-    dados.dataAvaliacao.ano = 0000;
-    dados.dataAvaliacao.mes = 0;
-    dados.dataAvaliacao.dia = 0;
+  }while(op != 'F');
 
-    return dados;
+  free(reservas);
+
+  return 0;
 }
 
-void lerNotas(tipoEstudante estudantes[], int numEstudantes)
-{
-    int i = 0;
-    for(i = 0 ; i < numEstudantes ; i++)
-    {
-        if(estudantes[i].nota < 0)
-        {
-            printf("\nNumero: %d",estudantes[i].numero);
-            printf("\nNome: %s",estudantes[i].nome);
-            printf("\nIntroduza a data da avaliacao:");
-            estudantes[i].dataAvaliacao = lerData();
-            printf("\nIntroduza a nota final");
-            estudantes[i].nota = lerFloat(0.00,20.00);
-        }
-
-    }
+int lerInteiro(int min, int max) {
+  int op, controlo;
+  do{
+    printf("Introduza um inteiro entre %d e %d\n", min, max);
+    controlo = scanf("%d", &op);
+    limpaBufferStdin();
+  }while(controlo == 0 || op < min || op > max);
+  return op;
 }
 
-void mostrarDados(tipoEstudante estudantes[], int numEstudantes)
-{
-    int i;
-
-    for(i = 0 ; i < numEstudantes ; i ++)
-    {
-        printf("\n\n\nNumero: %d",estudantes[i].numero);
-        printf("\nNome: %s",estudantes[i].nome);
-        if(estudantes[i].nota >= 0)
-        {
-            printf("\nData avaliacao: %d/%d/%d",estudantes[i].dataAvaliacao.ano, estudantes[i].dataAvaliacao.mes, estudantes[i].dataAvaliacao.dia);
-            printf("\nNota: %.2f",estudantes[i].nota);
-        }
-    }
+float lerFloat(float min, float max){
+  int controlo;
+  float op;
+  do{
+    printf("Introduza um inteiro entre %.1f e %.1f\n", min, max);
+    controlo = scanf("%f", &op);
+    limpaBufferStdin();
+  }while(controlo == 0 || op < min || op > max);
+  return op;
 }
 
-int acrescentaAvaliado(tipoEstudante estudantes[], int numEstudantes)
-{
-    if(numEstudantes < 100)
-    {
-        estudantes[numEstudantes] = lerDadosEstudante(estudantes,numEstudantes);
-
-        numEstudantes += 1;
-    }
-    else
-    {
-        printf("\nTotal de estudantes atingido.\n");
-    }
-    return numEstudantes;
+void limpaBufferStdin(){
+  char chr;
+  do{
+    chr = getchar();
+  }while(chr != '\n' && chr != EOF);
 }
 
-int procuraEstudante(tipoEstudante estudantes[],int numEstudante, int num)
-{
-    int i, indice = -1;
-
-    for(i = 0 ; i < numEstudante ; i ++)
-    {
-        if (num == estudantes[i].numero)
-        {
-            indice = i;
-            i = numEstudante;
-        }
-    }
-
-    return indice;
+void lerString(char string[MAXSTRING]) {
+  fgets(string, MAXSTRING, stdin);
+  limpaBufferStdin();
 }
 
-void limparBufferStdin()
-{
-    char chr;
-    do
-    {
-        chr = getchar();
-    }
-    while(chr != '\n' && chr != EOF);
+int lerQuantidadeEstudantes() {
+  int quantidade = 0;
+  quantidade = lerInteiro(0, MAX);
+  
+  return quantidade;
 }
 
-int contas(tipoEstudante estudantes[],float *MPositivos, int numEstu)
-{
-    int i = 0, numN = 0, totalP = 0;
-    for(i = 0 ; i < numEstu ; i ++)
-    {
-        if(estudantes[i].nota != -1)
-        {
-            if(estudantes[i].nota >= 9.5)
-            {
-                totalP ++;
-            }
-            numN ++;
-        }
-    }
-    if (numN != 0)
-    {
-        *MPositivos  = ((float)totalP * 100)/numN;
-    }
-    else
-    {
-        *MPositivos = 0.00;
-        numN = 0;
-    }
-    return numN;
+void lerDadosEstudante(tipoEstudante *estudante, tipoEstudante estudantes[MAX], int quantidade){
+  printf("Introduza o numero do estudante:\n");
+  estudante->numero = procuraEstudante(estudantes, quantidade);
+  
+  printf("Introduza o nome do estudante:\n");
+  lerString(estudante->nome);
 }
 
-void gravaFicheiroBinario(tipoEstudante estudantes[MAXIMOESTUDANTES], int totalEstu)
-{
-    int controlo;
-    FILE *dados;
-    dados = fopen("dados.dat","wb");
-
-    if (dados != NULL)
-    {
-        controlo = fwrite(&totalEstu,sizeof(int),1,dados);
-        if (controlo != 1)
-        {
-            printf("\nErro ao gravar ficheiro\n");
-        }
-        else
-        {
-            controlo = fwrite(estudantes, sizeof(tipoEstudante),totalEstu,dados);
-            if (controlo != totalEstu)
-            {
-                printf("\nErro ao gravar ficheiro\n");
-            }
-        }
-        fclose(dados);
-    }
-    else
-    {
-        printf("\nAbertura do ficheiro falhou.");
-    }
-
+int lerNotas(tipoEstudante estudantes[MAX], int quantidade){
+  int num_avaliados = 0;
+  for(int i = 0; i < quantidade; i++){
+    printf("Introduza a nota do estudante n%d\n", i);
+    estudantes[i].nota = lerFloat(0, 20);
+    num_avaliados++;
+  }
+  return num_avaliados;
 }
 
-int leFicheiroBinario(tipoEstudante estudantes[MAXIMOESTUDANTES])
-{
-    int controlo, totalEstu;
-    FILE *dados;
-    dados = fopen("dados.dat","rb");
-
-    if (dados != NULL)
-    {
-        controlo = fread(&totalEstu,sizeof(int),1,dados);
-        if (controlo != 1)
-        {
-            printf("\nErro ao gravar ficheiro\n");
-        }
-        else
-        {
-            controlo = fread(estudantes, sizeof(tipoEstudante),totalEstu,dados);
-            if (controlo != totalEstu)
-            {
-                printf("\nErro ao gravar ficheiro\n");
-            }
-        }
-        fclose(dados);
-    }
-    else
-    {
-        printf("\nAbertura do ficheiro falhou.");
-    }
-
-
-    return totalEstu;
+void mostrarDados(tipoEstudante estudantes[MAX], int quantidade){
+  for(int i = 0; i < quantidade; i++){
+    printf("Numero: %d\n", estudantes[i].numero);
+    printf("Nome: %s\n", estudantes[i].nome);
+    printf("Data: %d/%d/%d\n",
+       estudantes[i].dataAval.dia, estudantes[i].dataAval.mes, estudantes[i].dataAval.ano);
+    printf("Nota: %.1f\n", estudantes[i].nota);
+  }
 }
 
-void gravaFicheiroTexto(tipoEstudante estudantes[MAXIMOESTUDANTES], int totalEstu)
+tipoData lerData(){
+  tipoData data;
+  printf("Introduza a data de avaliacao\n");
+  printf("Introduza o dia:\n");
+  data.dia = lerInteiro(1, 31);
+  printf("Introduza o mes:\n");
+  data.mes = lerInteiro(1, 12);
+  printf("Introduza o ano:\n");
+  data.ano = lerInteiro(1999, 2023);
+  return data;
+}
+
+void acrescentaEstudante(tipoEstudante estudantes[MAX], int *quantidade) {
+  if(*quantidade == MAX){
+    printf("A quantidade maxima de estudantes ja foi atingida\n");
+    return;
+  }
+
+  tipoEstudante estudante;
+  lerDadosEstudante(&estudante, estudantes, *quantidade);
+  estudante.dataAval = lerData();
+  estudantes[*quantidade] = estudante;
+  estudantes[*quantidade].nota = -1.0f;
+  (*quantidade)++;
+}
+
+int obterNumEstudanteExistente(tipoEstudante estudantes[MAX], int quantidade){
+  printf("Introduza um numero de estudante existente:\n");
+  int num, count = 0; 
+  do{
+    num = lerInteiro(MIN_NUM, MAX_NUM);  
+    for(int i = 0; i < quantidade; i++) {
+      if(estudantes[i].numero == num){
+        count++;
+      }
+    }
+  }while(count == 0);
+  return num;
+}
+
+int procuraEstudante(tipoEstudante estudantes[MAX], int quantidade){
+  int num, count = 0; 
+  do{
+    num = lerInteiro(MIN_NUM, MAX_NUM);  
+    for(int i = 0; i < quantidade; i++) {
+      if(estudantes[i].numero == num){
+        count++;
+      }
+    }
+  }while(count > 0);
+  return num;
+}
+
+char menu(tipoEstudante estudantes[MAX], int quantidade){
+  char op;
+  int num_avaliados = 0;
+  float per_notas_positivas = 0.0f;
+  contas(estudantes, quantidade, &num_avaliados, &per_notas_positivas);
+  printf("****************** Menu Principal ******************\n");
+  printf("Estudantes Inseridos: %d\n", quantidade); 
+  printf("Estudantes Avaliados: %d\t Notas Positivas(%%): %.2f\n", num_avaliados, per_notas_positivas);
+  printf("A - Acrescenta Estudante\n");
+  printf("I - Introducao Notas\n");
+  printf("M - Mostrar Dados\n");
+  printf("G - Gravar dados em ficheiros\n");
+  printf("L - Ler dados em ficheiro\n");
+  printf("R - Reservar refeicao\n");
+  printf("E - Eliminar reserva\n");
+  printf("F - Fim\n");
+  printf("\tOpcao-->");
+  scanf(" %c", &op);
+  return toupper(op);
+}
+
+void contas(tipoEstudante estudantes[MAX], int quantidade, int *num_avaliados, float *per_notas_positivas)
 {
-    int controlo[7], i = 0, y = 0;
-    FILE *dados;
-    dados = fopen("dados.txt","w");
+  for(int i = 0; i < quantidade; i++){
+    if(estudantes[i].nota > 0.0f){
+      (*num_avaliados)++;
+      if(estudantes[i].nota >= 9.5) {
+        *per_notas_positivas += 1.0f;
+      }
+    } 
+  }
+  *per_notas_positivas = (*per_notas_positivas * 100.0f) / *num_avaliados;  
+}
 
-    if (dados != NULL)
-    {
-        controlo[0] = fprintf(dados,"%d\n",totalEstu);
-        for(i = 0 ; i < totalEstu ; i ++ )
-        {
-            controlo[1] = fprintf(dados,"Numero: %d\n",estudantes[i].numero);
-            controlo[2] = fprintf(dados,"Nome: %s\n",estudantes[i].nome);
-            controlo[3] = fprintf(dados,"Nota: %2.2f\n",estudantes[i].nota);
-            controlo[4] = fprintf(dados,"Data: %d/",estudantes[i].dataAvaliacao.ano);
-            controlo[5] = fprintf(dados,"%d/",estudantes[i].dataAvaliacao.mes);
-            controlo[6] = fprintf(dados,"%d\n",estudantes[i].dataAvaliacao.dia);
+void gravaFicheiroBinario(tipoEstudante estudantes[MAX], int quantidade) {
+  FILE *ficheiro;
 
-            for (y = 0 ; y < 7 ; y++)
-            {
-                if(controlo[y] <= 1)
-                {
-                    printf("\nErro ao guardar dados \n");
-                    y = 7;
-                    i = totalEstu;
-                }
-            }
-        }
-        fclose(dados);
-    }
-    else
-    {
-        printf("\nAbertura do ficheiro falhou.");
-    }
+  ficheiro = fopen("dados.dat", "wb");
+  if (ficheiro == NULL){
+    printf("Erro a abrir ficheiro!\n");
+    return;
+  }
+  
+  fwrite(&quantidade, sizeof(int), 1, ficheiro);
+  fwrite(estudantes, sizeof(tipoEstudante), quantidade, ficheiro);
+  fclose(ficheiro);
+}
+
+void gravaFicheiroTexto(tipoEstudante estudantes[MAX], int quantidade) {
+  FILE *ficheiro;
+
+  ficheiro = fopen("dados.txt", "w");
+  if (ficheiro == NULL){
+    printf("Erro a abrir ficheiro!\n");
+    return;
+  }
+  
+  fprintf(ficheiro, "%d\n", quantidade);
+  for(int i = 0; i < quantidade; i++){
+    fprintf(ficheiro, "Numero: %d\n", estudantes[i].numero); 
+    fprintf(ficheiro, "Nome: %s\n", estudantes[i].nome); 
+    fprintf(ficheiro, "Nota: %.1f\n", estudantes[i].nota); 
+    fprintf(ficheiro, "Data: Dia: %d Mes: %d Ano %d\n", estudantes[i].dataAval.dia, estudantes[i].dataAval.mes, estudantes[i].dataAval.ano); 
+  }
+  
+  fclose(ficheiro);
+}
+
+void lerFicheiroBinario(tipoEstudante estudantes[MAX], int *quantidade) {
+  FILE *ficheiro;
+
+  ficheiro = fopen("dados.dat", "rb");
+  if (ficheiro == NULL){
+    printf("Erro a abrir ficheiro!\n");
+    return;
+  }
+  
+  fread(quantidade, sizeof(int), 1, ficheiro);
+  fread(estudantes, sizeof(tipoEstudante), *quantidade, ficheiro);
+  fclose(ficheiro);
 }
