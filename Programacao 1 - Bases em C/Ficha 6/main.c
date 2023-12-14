@@ -67,6 +67,8 @@ int main(){
         break;
       case 'E':
         break;
+        case 'F':
+        break;
       default:
         printf("Opcao invalida\n");
     }
