@@ -60,7 +60,7 @@ int main(){
         break;
       case 'R':
         if(quantidade == 0) {
-          printf("Nao existe estudantes para reservar refeicao.\n");
+          printf("Nao existe estudantes upara reservar refeicao.\n");
           break;
         }
         adicionar_reserva(reservas, &num_reservas, &tamanho, obterNumEstudanteExistente(estudantes, quantidade));
