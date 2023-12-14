@@ -1,3 +1,0 @@
-C:/Users/simao/Projects/College-projects/Programacao 1 - Bases em C/Ficha 6/build/CMakeFiles/ficha6.dir
-C:/Users/simao/Projects/College-projects/Programacao 1 - Bases em C/Ficha 6/build/CMakeFiles/edit_cache.dir
-C:/Users/simao/Projects/College-projects/Programacao 1 - Bases em C/Ficha 6/build/CMakeFiles/rebuild_cache.dir
