@@ -1,0 +1,111 @@
+/*Muda cor do label no forms*/
+.form-label {
+  color: var(--label-color);
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+nav .logo {
+  z-index: 1;
+}
+
+.home {
+  background: var(--bg-color);
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: -1;
+  padding: 300px 0 50px;
+}
+
+.home .home-info .left h3 {
+  font-size: 2.5em;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  color: var(--first);
+  border-radius: 25px;
+}
+
+.home .home-info .left h1 {
+  font-size: 4.5em;
+  color: var(--first);
+  margin: 10px 0;
+}
+
+.home .home-info .left h4 {
+  color: var(--first);
+  font-size: 2.2em;
+  font-weight: bold;
+  min-width: 280px;
+  margin-bottom: 20px;
+}
+
+.home .home-info .left h4 span {
+  color: var(--color);
+}
+
+.home .home-info .right {
+  flex: 1;
+}
+
+
+@media screen and (max-width: 992px) {
+  header {
+    background: var(--bg-color);
+    position: sticky;
+    top: 0;
+    z-index: 9;
+  }
+
+  header nav .list-darkmode-menu ul {
+    position: fixed;
+    top: 89px;
+    left: -100%;
+    max-width: 60%;
+    width: 100%;
+   
+    background: var(--bg-color);
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-direction: column;
+    padding: 30px 50px;
+    gap: 30px;
+    transition: 0.3s ease;
+  }
+
+  header nav .list-darkmode-menu ul li a {
+    font-size: 22px;
+  }
+
+  header nav .list-darkmode-menu ul.active {
+    left: 0%;
+  }
+
+  .home {
+    position: relative;
+    padding: 30px 50px;
+    z-index: 1;
+  
+  }
+
+  .home .home-info {
+    flex-direction: column-reverse;
+  }
+
+  .home .home-info .left {
+    padding-top: 1px;
+    padding-top: 50px;
+  }
+
+  .right .profile .container form {
+    padding-top: 70px;
+  }
+
+}
+
+

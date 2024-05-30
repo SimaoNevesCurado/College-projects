@@ -1,0 +1,14 @@
+Hora: 10:00 | Valor: 26
+Hora: 10:00 | Valor: 1
+Hora: 10:00 | Valor: 30
+Hora: 10:00 | Valor: 30
+Hora: 10:00 | Valor: 30
+Hora: 10:00 | Valor: 19
+Hora: 15:27
+ | Valor: 22
+Hora: 15:27
+ | Valor: 16
+Hora: 15:27
+ | Valor: 20
+Hora: 15:27
+ | Valor: 22

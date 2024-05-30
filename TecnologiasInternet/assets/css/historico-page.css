@@ -1,0 +1,91 @@
+/*Botões para a tabela*/
+  .table-buttons{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    list-style: none;
+    z-index: 1;
+  }
+  .table-buttons a {
+    position: relative;
+    text-decoration: none;
+    color: #000;
+    transition: 0.3s ease;
+  }
+  .table-buttons a:hover {
+    color: var(--color);
+  }
+  .table-buttons a:hover::before {
+    width: 100%;
+  }
+  .table-buttons a::before {
+    content: "";
+    position: absolute;
+    bottom: -7px;
+    left: 0;
+    width: 0;
+    height: 2.5px;
+    background: var(--color);
+    transition: 0.3s ease;
+  }
+
+  .home {
+    background: var(--bg-color);
+    position: absolute;
+    width: 100%;
+    z-index: -1;
+    padding: 200px 0 50vh;
+  }
+
+
+  @media screen and (max-width: 992px){
+    section {
+      background: var(--bg-color);
+      position: sticky;
+      top: 0;
+      z-index: 9;
+    }
+    section .table-buttons{
+      display: block;
+    }
+    .home {
+      position: relative;
+      margin-right:50%;
+      z-index: 1;
+    }
+    .col-md-4 {
+      flex: 0 0 auto;
+      width: 100%;
+    }
+    /*section .table-buttons{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      list-style: none;
+      z-index: 1;
+    }
+    .table-buttons a {
+      position: relative;
+      text-decoration: none;
+      color: #000;
+      transition: 0.3s ease;
+    }
+    .table-buttons a:hover {
+      color: var(--color);
+    }
+    .table-buttons a:hover::before {
+      width: 100%;
+    }
+    .table-buttons a::before {
+      content: "";
+      position: absolute;
+      bottom: -7px;
+      left: 0;
+      width: 0;
+      height: 2.5px;
+      background: var(--color);
+      transition: 0.3s ease;
+    }*/
+  }

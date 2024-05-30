@@ -1,0 +1,217 @@
+/*CARTOES*/
+.card {
+  border: none;
+  border-radius: 10px
+}
+
+.c-details span {
+  font-weight: 300;
+  font-size: 13px
+}
+
+.icon {
+  width: 50px;
+  height: 50px;
+  background-color: #eee;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 39px
+}
+  
+.badge span {
+  background-color: #3ba097;
+  width: 60px;
+  height: 25px;
+  padding-bottom: 3px;
+  border-radius: 5px;
+  display: flex;
+  color: #ffffff;
+  justify-content: center;
+  align-items: center
+}
+
+.progress {
+  height: 10px;
+  border-radius: 10px
+}
+
+.progress div {
+  background-color: red
+}
+
+.text1 {
+  font-size: 14px;
+  font-weight: 600
+}
+
+.text2 {
+  color: #a5aec0
+}
+/*F CARTOES*/
+
+nav {
+
+  margin-top: -59px;
+}
+
+/* Formacacao dos itens do navbar */
+nav .list-darkmode-menu {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+}
+nav .list-darkmode-menu ul {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 95px;
+  gap: 35px;
+  font-size: 18px;
+  list-style: none;
+  z-index: 1;
+}
+nav .list-darkmode-menu ul li a {
+  position: relative;
+  text-decoration: none;
+  color: var(--first);
+  font-size: 18px;
+  font-weight: 500;
+  transition: 0.3s ease;
+}
+nav .list-darkmode-menu ul li a:hover {
+  color: var(--color);
+}
+/*Animacao do navbar quando passado o rato por cima*/
+nav .list-darkmode-menu ul li a:hover::before {
+  width: 100%;
+}
+nav .list-darkmode-menu ul li a::before {
+  content: "";
+  position: absolute;
+  bottom: -7px;
+  left: 0;
+  width: 0;
+  height: 2.5px;
+  background: var(--color);
+  transition: 0.3s ease;
+}
+
+
+nav .list-darkmode-menu .hamburger {
+  position: relative;
+  width: 30px;
+  cursor: pointer;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  border: none;
+  outline: none;
+  background: none;
+  scale: 0.9;
+  display: none;
+}
+nav .list-darkmode-menu .hamburger .bar, nav .list-darkmode-menu .hamburger::after, nav .list-darkmode-menu .hamburger::before {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 3px;
+  background: var(--first);
+  margin: 6px 0;
+  transition: 0.4s;
+}
+nav .list-darkmode-menu .hamburger.active::before {
+  transform: rotate(-45deg) translate(-8px, 5px);
+}
+nav .list-darkmode-menu .hamburger.active::after {
+  transform: rotate(45deg) translate(-8px, -5px);
+}
+nav .list-darkmode-menu .hamburger.active .bar {
+  opacity: 0;
+}
+
+.home h1 {
+  font-size: 2.5em;
+  color: var(--first);
+  margin: 10px 0;
+}
+
+.home {
+  background: var(--bg-color);
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: -1;
+  padding: 200px 0 50vh;
+}
+
+
+@media screen and (max-width: 992px) {
+  header {
+    background: var(--bg-color);
+    position: sticky;
+    top: 0;
+    z-index: 9;
+  }
+  .home{
+    z-index: 1;
+  }
+
+  @media (max-width: 955px) {
+    .col-md-4 {
+      flex: 0 0 auto;
+      width: 100%;
+    }
+ 
+  }
+  header nav .list-darkmode-menu ul {
+    position: fixed;
+    top: 100px;
+    left: -100%;
+    max-width: 60%;
+    width: 100%;
+    height: 100vh;
+    background: var(--bg-color);
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-direction: column;
+    padding: 30px 50px;
+    gap: 30px;
+    transition: 0.3s ease;
+  }
+  header nav .list-darkmode-menu ul li a {
+    font-size: 22px;
+  }
+  header nav .list-darkmode-menu ul.active {
+    left: 0%;
+  }
+  header nav .list-darkmode-menu .hamburger {
+    display: block;
+  }
+  .home {
+    position: relative;
+    padding: 50px 50px;
+ 
+  }
+  .home .home-info {
+    flex-direction: column-reverse;
+  }
+}
+@media screen and (max-width: 992px) {
+  header {
+    background: var(--bg-color);
+    position: sticky;
+    top: 0;
+    z-index: 9;
+  }
+  .home{
+    z-index: 1;
+  }
+}
+  @media screen and (max-width: 440px) {
+   .home h1{
+    font-size: 2em;
+   }
+  }
+
