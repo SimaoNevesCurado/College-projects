@@ -1,0 +1,17 @@
+O_APPEND - once OPENED, it places the cursor on the end of the file.
+O_CREAT - If pathname does not exist, create it as a regular file.
+O_EXCL - Together with O_CREAT, if file already exists, does not delete or overwrite.
+S_IRWXU - 0700 leitura|escrita|execucao UTILIZADOR
+S_IRUSR - 0400 leitura UTILIZADOR
+S_IWUSR - 0200 escrita UTILIZADOR
+S_IXUSR - 0100 execucao UTILIZADOR
+S_IRWXG - 0070 leitura|escrita|execucao GRUPO
+S_IRGRP - 0040 leitura GRUPO
+S_IWGRP - 0020 escrita GRUPO
+S_IXGRP - 0010 execucao GRUPO
+S_IRWXO - 0007 leitura|escrita|execucao OUTROS
+S_IROTH - 0004 leitura OUTROS
+S_IWOTH - 0002 escrita OUTROS
+S_IXOTH - 0001 execucao OUTROS
+
+0644 - permissoes

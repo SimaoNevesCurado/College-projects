@@ -1,0 +1,21 @@
+package "bin2text"
+version "1.0"
+purpose "Binary file converter."
+description "Author – 2230922 / Simao Curado\n
+Operating Systems - ESTG - Leiria"
+versiontext ""
+
+#----------------------------
+# independent options
+#----------------------------
+# Mandatory option
+option "in" i "Input file name" string typestr="filename" required
+option "out" o "Output file name" string typestr="filename" required
+option "type" t "Type of data (I=integer; L=long)" string typestr="string" required
+
+# Optional
+option "show" s "Display more info (0=disable; 1=enable)" int typestr="integer" optional
+
+#
+# NOTE: support for this file needs to be enabled in 'makefile'
+#

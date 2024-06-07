@@ -1,0 +1,21 @@
+package "executable_name"
+version "1.0"
+purpose "Simple example (optional)"
+description "description needed (optional)"
+versiontext "versiontext needed (optional)"
+
+#----------------------------
+# independent options
+#----------------------------
+# Mandatory option
+option "filename" f "filename" string typestr="dirname" required
+option "outfile" o "outfile" string typestr="dirname" required
+option "buffer" o "buffer" string typestr="dirname" optional
+
+
+# Optional
+#option "num" n "number" int optional
+
+#
+# NOTE: support for this file needs to be enabled in 'makefile'
+#

@@ -1,0 +1,90 @@
+**
+ * @file main.c
+ * @brief Description
+ * @date 2018-1-1
+ * @author name of author
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <errno.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <fcntl.h>
+#include "debug.h"
+#include "memory.h"
+#include "args.h"
+
+int main(int argc, char *argv[])
+{
+
+    struct gengetopt_args_info args_info;
+
+    if (cmdline_parser(argc, argv, &args_info) != 0)
+    {
+        return 1;
+    }
+    // Assuming args_info has members input_file
+    char *input_filename = args_info.filename_arg;
+    char *output_filename = args_info.outfile_arg;
+
+    int file = open(input_filename, O_RDONLY); // O_* precisa do #include <fcntl.h>
+
+    if (file == -1)
+    {
+        ERROR(1, " Opening file: %s\n", input_filename);
+        close(file);
+    }
+    //todo outra maneira de ler 
+    //unsigned char buffer[4096];
+    ssize_t bytes_lidos;
+    ssize_t bytes_escritos;
+    //?buffer para ler byte a byte
+    char buffer[1];
+
+    int outFile = open(output_filename, O_CREAT | O_WRONLY | O_TRUNC | O_APPEND, 0644);
+
+    //todo outra maneira de ler
+    /*
+    while (1)
+    {
+        bytes_lidos = read(file, buffer, sizeof(buffer));
+        if (bytes_lidos == -1)
+        {
+            ERROR(2, "Can't read from input file");
+        }
+
+        bytes_escritos = write(outFile, buffer, bytes_lidos);
+        if (bytes_escritos == -1)
+        {
+            ERROR(3, "Cant write to output file");
+        }
+    }
+
+    */
+
+
+    //? Lê byte a byte
+     if ((bytes_lidos = read(file, buffer, sizeof(buffer))) < 0)
+       {
+           ERROR(1, "Opening file %s", file);
+           close(file);
+       }
+
+       while ((bytes_lidos = read(file, buffer, sizeof(buffer))) > 0)
+       {
+
+           write(outFile,buffer, bytes_lidos);
+
+       }
+
+
+    printf("%s Copied to %s\n", input_filename, output_filename);
+    close(file);
+    close(outFile);
+
+    cmdline_parser_free(&args_info);
+    return 0;
+}
